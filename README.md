@@ -1,5 +1,5 @@
 <h2 align="center">TicTacToe A.I </h2>
-<p>Implementation of Tic-Tac-Toe A.I </p>
+<p>An A.I integrated Game of Tic Tac Toe. In which you can choose between X & O and an A.I will play against you. </p>
 <h3>Here's a demo : </h3>
 </p>
 
