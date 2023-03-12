@@ -1,5 +1,6 @@
 <h2>TicTacToe-AI </h2>
-<p>Implementation of tic tac toe ai using python.
+<p>Implementation of Tic-Tac-Toe A.I </p>
+<h3>Here's a demo ~ </h3>
 </p>
 
 ```sh
