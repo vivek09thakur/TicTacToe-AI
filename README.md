@@ -3,8 +3,9 @@
 
 > If you choose X then AI will play as O
 If you choose O then A.I will play X
-<h3>Here's a demo : </h3>
-</p>
+
+<h3>Here's a demo game : </h3>
+
 
 ```sh
     
