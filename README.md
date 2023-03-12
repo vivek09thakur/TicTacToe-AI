@@ -2,6 +2,8 @@
 <p>Implementation of tic tac toe ai using python.
 </p>
 
+```sh
+    
 New Game!
 ----------------
 |   ||   ||   |
@@ -87,4 +89,5 @@ Draw!
 Wanna try again?(Y/N) : N
 Marrao tab!
 
-[Program finished]
+
+```
