@@ -1,4 +1,4 @@
-<h2 align="center">TicTacToe A.I </h2>
+<h2 align="center">TicTacToe A.I❎🅾️ </h2>
 <p>An A.I integrated Game of Tic Tac Toe. In which you can choose between X & O and an A.I will play against you.</p>
 
 > If you choose X then AI will play as O
