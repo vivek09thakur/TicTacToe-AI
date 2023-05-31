@@ -120,7 +120,6 @@ def getBestMove(state, player):
 
     return (best, best_move)
 
-
 play_again = 'Y'
 while play_again == 'Y' or play_again == 'y':
     game_state = [[' ', ' ', ' '],
