@@ -25,8 +25,13 @@
 > If you choose X then AI will play as O , If you choose O then A.I will play X.
 
 ![](./ss/img1.jpg)
+
 ![](./ss/img2.jpg)
+
 ![](./ss/img3.jpg)
+
 ![](./ss/img4.jpg)
+
 ![](./ss/img5.jpg)
+
 ![](./ss/img6.jpg)
