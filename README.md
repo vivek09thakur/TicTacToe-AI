@@ -5,4 +5,6 @@ It is an AI agent that plays the game of Tic-Tac-Toe. The agent uses the minimax
 
 ### DEMO GAMEPLAY
 
-<video src='https://www.youtube.com/watch?v=v8nAjVT5diA' width=180/>
+<video width="600" height="400" controls>
+  <source src="demo game/demo_game.mp4" type="video/mp4">
+</video>
