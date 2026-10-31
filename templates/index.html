@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tic-Tac-Toe AI — play an unbeatable minimax opponent</title>
+    <meta name="description" content="{{ description }}" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='favicon.svg') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Tic-Tac-Toe AI" />
+    <meta property="og:description" content="{{ description }}" />
+    <meta name="twitter:card" content="summary" />
+    {% if site_url %}
+    <link rel="canonical" href="{{ site_url }}/" />
+    <meta property="og:url" content="{{ site_url }}/" />
+    {% endif %}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Tic-Tac-Toe AI",
+        "description": "{{ description }}",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript"{% if site_url %},
+        "url": "{{ site_url }}/"{% endif %}
+      }
+    </script>
+</head>
+
+<body>
+    <main class="stack">
+        <header class="brand">
+            <svg class="logo" viewBox="0 0 48 48" width="32" height="32" aria-hidden="true" focusable="false">
+                <path d="M17 6v36M31 6v36M6 17h36M6 31h36" fill="none" stroke="currentColor" stroke-width="3.5"
+                    stroke-linecap="round" />
+                <circle cx="24" cy="24" r="3.75" fill="var(--color-accent)" />
+            </svg>
+            <h1>Tic-Tac-Toe AI</h1>
+        </header>
+
+        <p id="status" class="status" role="status" aria-live="polite">Your turn</p>
+        <noscript>
+            <p class="status" data-tone="error">This game needs JavaScript to run.</p>
+        </noscript>
+
+        <div id="board" class="board" aria-label="Board">
+            {% for i in range(9) %}
+            <button type="button" class="cell" data-index="{{ i }}"
+                aria-label="Row {{ i // 3 + 1 }}, column {{ i % 3 + 1 }}, empty"></button>
+            {% endfor %}
+        </div>
+
+        <div class="controls">
+            <div class="side" role="radiogroup" aria-labelledby="side-label">
+                <span id="side-label" class="side-label">Play as</span>
+                <label><input type="radio" name="side" value="X" checked /> X</label>
+                <label><input type="radio" name="side" value="O" /> O</label>
+            </div>
+            <button type="button" id="new-game" class="btn-primary">New game</button>
+        </div>
+    </main>
+
+    <footer class="credit">
+        <p>Design and developed by <a href="https://vishme.vercel.app" target="_blank" rel="noopener noreferrer">Vivek
+                Thakur</a></p>
+        <p>All rights reserved.</p>
+    </footer>
+
+    <script src="{{ url_for('static', path='app.js') }}" data-move-url="{{ url_for('move') }}" defer></script>
+</body>
+
+</html>

@@ -1,161 +1,77 @@
-from math import inf as infinity
+import os
+from pathlib import Path
+from typing import Literal
 
-game_state = [[' ', ' ', ' '],
-              [' ', ' ', ' '],
-              [' ', ' ', ' ']]
-players = ['X', 'O']
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import PlainTextResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel, Field
 
+import tictactoe
 
-def play_move(state, player, block_num):
-    if state[int((block_num-1)/3)][(block_num-1) % 3] == ' ':
-        state[int((block_num-1)/3)][(block_num-1) % 3] = player
-    else:
-        block_num = int(input("Block is not empty, Choose again: "))
-        play_move(state, player, block_num)
+ROOT = Path(__file__).parent
+DESCRIPTION = (
+    "Play tic-tac-toe in your browser against an unbeatable AI that uses minimax search. "
+    "Choose X or O — the best you can do is a draw."
+)
+# Public origin, e.g. https://tictactoe.example.com; enables canonical/og:url tags when set.
+SITE_URL = os.environ.get("SITE_URL", "").rstrip("/")
 
+app = FastAPI(title="Tic-Tac-Toe AI", docs_url=None, redoc_url=None)
+app.mount("/static", StaticFiles(directory=ROOT / "static"), name="static")
+templates = Jinja2Templates(directory=ROOT / "templates")
 
-def copy_game_state(state):
-    new_state = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
-    for i in range(3):
-        for j in range(3):
-            new_state[i][j] = state[i][j]
-    return new_state
-
-
-def check_current_state(game_state):
-
-    if (game_state[0][0] == game_state[0][1] and game_state[0][1] == game_state[0][2] and game_state[0][0] != ' '):
-        return game_state[0][0], "Done"
-    if (game_state[1][0] == game_state[1][1] and game_state[1][1] == game_state[1][2] and game_state[1][0] != ' '):
-        return game_state[1][0], "Done"
-    if (game_state[2][0] == game_state[2][1] and game_state[2][1] == game_state[2][2] and game_state[2][0] != ' '):
-        return game_state[2][0], "Done"
-
-    if (game_state[0][0] == game_state[1][0] and game_state[1][0] == game_state[2][0] and game_state[0][0] != ' '):
-        return game_state[0][0], "Done"
-    if (game_state[0][1] == game_state[1][1] and game_state[1][1] == game_state[2][1] and game_state[0][1] != ' '):
-        return game_state[0][1], "Done"
-    if (game_state[0][2] == game_state[1][2] and game_state[1][2] == game_state[2][2] and game_state[0][2] != ' '):
-        return game_state[0][2], "Done"
-
-    if (game_state[0][0] == game_state[1][1] and game_state[1][1] == game_state[2][2] and game_state[0][0] != ' '):
-        return game_state[1][1], "Done"
-    if (game_state[2][0] == game_state[1][1] and game_state[1][1] == game_state[0][2] and game_state[2][0] != ' '):
-        return game_state[1][1], "Done"
-
-    # draw
-
-    draw_flag = 0
-    for i in range(3):
-        for j in range(3):
-            if game_state[i][j] == ' ':
-                draw_flag = 1
-    if draw_flag == 0:
-        return None, "Draw"
-
-    return None, "Not Done"
+Mark = Literal["X", "O"]
+Cell = Literal["X", "O", ""]
 
 
-def print_board(game_state):
-    print('----------------')
-    print('| ' + str(game_state[0][0]) + ' || ' +
-          str(game_state[0][1]) + ' || ' + str(game_state[0][2]) + ' |')
-    print('----------------')
-    print('| ' + str(game_state[1][0]) + ' || ' +
-          str(game_state[1][1]) + ' || ' + str(game_state[1][2]) + ' |')
-    print('----------------')
-    print('| ' + str(game_state[2][0]) + ' || ' +
-          str(game_state[2][1]) + ' || ' + str(game_state[2][2]) + ' |')
-    print('----------------')
+class MoveRequest(BaseModel):
+    board: list[Cell] = Field(min_length=9, max_length=9)
+    ai: Mark
 
 
-def getBestMove(state, player):
-    '''
-    Minimax Algorithm
-    '''
-    winner_loser, done = check_current_state(state)
-    if done == "Done" and winner_loser == 'O':  # If AI won
-        return (1, 0)
-    elif done == "Done" and winner_loser == 'X':  # If Human won
-        return (-1, 0)
-    elif done == "Draw":
-        return (0, 0)
+class MoveResponse(BaseModel):
+    board: list[Cell]
+    move: int | None
+    status: Literal["playing", "won", "draw"]
+    winner: Mark | None
+    line: list[int] | None
 
-    moves = []
-    empty_cells = []
-    for i in range(3):
-        for j in range(3):
-            if state[i][j] == ' ':
-                empty_cells.append(i*3 + (j+1))
 
-    for empty_cell in empty_cells:
-        move = {}
-        move['index'] = empty_cell
-        new_state = copy_game_state(state)
-        play_move(new_state, player, empty_cell)
+@app.get("/", include_in_schema=False)
+def index(request: Request):
+    return templates.TemplateResponse(
+        request, "index.html", {"description": DESCRIPTION, "site_url": SITE_URL}
+    )
 
-        if player == 'O':    # If AI
-            result, _ = getBestMove(new_state, 'X')
-            move['score'] = result
-        else:
-            result, _ = getBestMove(new_state, 'O')
-            move['score'] = result
 
-        moves.append(move)
+@app.get("/robots.txt", include_in_schema=False)
+def robots():
+    return PlainTextResponse("User-agent: *\nAllow: /\n")
 
-    # Finding my best move
-    best_move = None
-    if player == 'O':
-        best = -infinity
-        for move in moves:
-            if move['score'] > best:
-                best = move['score']
-                best_move = move['index']
-    else:
-        best = infinity
-        for move in moves:
-            if move['score'] < best:
-                best = move['score']
-                best_move = move['index']
 
-    return (best, best_move)
+@app.post("/api/move", response_model=MoveResponse)
+def move(req: MoveRequest):
+    board = "".join(cell or tictactoe.EMPTY for cell in req.board)
+    lead = board.count("X") - board.count("O")
+    if lead not in (0, 1):
+        raise HTTPException(400, "Board has an impossible number of marks.")
 
-play_again = 'Y'
-while play_again == 'Y' or play_again == 'y':
-    game_state = [[' ', ' ', ' '],
-                  [' ', ' ', ' '],
-                  [' ', ' ', ' ']]
-    current_state = "Not Done"
-    print("\nNew Game!")
-    print_board(game_state)
-    player_choice = input("Choose which player - X or O : ")
-    winner = None
+    state, winner, line = tictactoe.status(board)
+    played = None
 
-    if player_choice == 'X' or player_choice == 'x':
-        current_player_idx = 0
-    else:
-        current_player_idx = 1
+    if state == "playing":
+        if ("X" if lead == 0 else "O") != req.ai:
+            raise HTTPException(400, "It is not the AI's turn.")
+        played = tictactoe.best_move(board, req.ai)
+        board = tictactoe.play(board, played, req.ai)
+        state, winner, line = tictactoe.status(board)
 
-    while current_state == "Not Done":
-        if current_player_idx == 0:  # Human's turn
-            block_choice = int(
-                input("your turn! Choose where to place (1 to 9): "))
-            play_move(game_state, players[current_player_idx], block_choice)
-        else:   # AI's turn
-            _, block_choice = getBestMove(
-                game_state, players[current_player_idx])
-            play_move(game_state, players[current_player_idx], block_choice)
-            print("AI plays move: " + str(block_choice))
-        print_board(game_state)
-        winner, current_state = check_current_state(game_state)
-        if winner is not None:
-            print(str(winner) + " won!")
-        else:
-            current_player_idx = (current_player_idx + 1) % 2
-
-        if current_state == "Draw":
-            print("Draw!")
-
-    play_again = input('Wanna try again?(Y/N) : ')
-    if play_again == 'N':
-        print('Marrao tab!')
+    return MoveResponse(
+        board=[cell.strip() for cell in board],
+        move=played,
+        status=state,
+        winner=winner,
+        line=list(line) if line else None,
+    )

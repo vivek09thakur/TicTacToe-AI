@@ -1,0 +1,216 @@
+/* Tokens — the only place values are defined. Hover shades are derived with color-mix(). */
+:root {
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-xl: 26px;
+  --text-display: 40px; /* board marks */
+
+  --color-bg: #fff;
+  --color-surface: #f4f4f5;
+  --color-text: #111;
+  --color-muted: #666;
+  --color-border: #ddd;
+  --color-accent: #2962ff;
+  --color-on-accent: #fff;
+  --color-accent-soft: #e8efff; /* winning line */
+  --color-error: #c62828;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --control-h: 40px;
+  --content-w: 360px;
+
+  --duration: 150ms;
+  --ease: ease-out;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: 1fr auto; /* game centred, credit pinned below */
+  justify-items: center;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-4);
+  font: var(--text-base) / 1.5 var(--font);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+/* layout */
+.stack {
+  display: grid;
+  gap: var(--space-5);
+  width: min(100%, var(--content-w));
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.logo {
+  flex: none;
+  color: var(--color-text);
+}
+
+h1 {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* status — one line that always reserves its height so the board never jumps */
+.status {
+  min-height: 1.5em;
+  font-weight: 600;
+}
+
+.status[data-tone="busy"] {
+  color: var(--color-muted);
+}
+
+.status[data-tone="error"] {
+  color: var(--color-error);
+}
+
+/* board */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+.cell {
+  aspect-ratio: 1;
+  padding: 0;
+  font: 600 var(--text-display) / 1 var(--font);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--duration) var(--ease), border-color var(--duration) var(--ease);
+}
+
+.cell[aria-disabled="true"] {
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .cell:not([aria-disabled="true"]):hover {
+    background: color-mix(in srgb, var(--color-text) 6%, var(--color-surface));
+  }
+}
+
+.cell:not([aria-disabled="true"]):active {
+  background: color-mix(in srgb, var(--color-text) 12%, var(--color-surface));
+}
+
+.cell[data-win] {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+}
+
+/* controls */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.side {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.side-label {
+  margin-right: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+.side label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 44px;
+  padding: 0 var(--space-2);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.side input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--color-text);
+}
+
+.btn-primary {
+  height: var(--control-h);
+  padding: 0 var(--space-4);
+  font: inherit;
+  font-weight: 600;
+  color: var(--color-on-accent);
+  background: var(--color-accent);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--duration) var(--ease);
+}
+
+.btn-primary:hover {
+  background: color-mix(in srgb, var(--color-accent), black 12%);
+}
+
+.btn-primary:active {
+  background: color-mix(in srgb, var(--color-accent), black 20%);
+}
+
+/* credit */
+.credit {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.credit a {
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
