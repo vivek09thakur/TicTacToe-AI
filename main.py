@@ -15,7 +15,7 @@ DESCRIPTION = (
     "Play tic-tac-toe in your browser against an unbeatable AI that uses minimax search. "
     "Choose X or O — the best you can do is a draw."
 )
-# Public origin, e.g. https://tictactoe.example.com; enables canonical/og:url tags when set.
+
 SITE_URL = os.environ.get("SITE_URL", "").rstrip("/")
 
 app = FastAPI(title="Tic-Tac-Toe AI", docs_url=None, redoc_url=None)
